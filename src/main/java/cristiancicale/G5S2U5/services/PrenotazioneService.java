@@ -52,11 +52,11 @@ public class PrenotazioneService {
         }
 
         Prenotazione newPrenotazione = new Prenotazione(dipendente, viaggio, body.note());
-        Prenotazione savedPrenotazione = this.prenotazioneRepository.save(newPrenotazione);
 
         newPrenotazione.setDataRichiesta(LocalDate.now());
-
         newPrenotazione.setDataViaggio(dataViaggio);
+
+        Prenotazione savedPrenotazione = this.prenotazioneRepository.save(newPrenotazione);
 
         log.info("La prenotazione con id " + savedPrenotazione.getId() + "è stata salvata correttamente");
 
