@@ -3,14 +3,21 @@ package cristiancicale.G5S2U5.services;
 import cristiancicale.G5S2U5.entities.Dipendente;
 import cristiancicale.G5S2U5.entities.Prenotazione;
 import cristiancicale.G5S2U5.entities.Viaggio;
+import cristiancicale.G5S2U5.exceptions.NotFoundException;
 import cristiancicale.G5S2U5.exceptions.ValidationException;
 import cristiancicale.G5S2U5.payloads.PrenotazioneDTO;
+import cristiancicale.G5S2U5.payloads.PrenotazionePayload;
 import cristiancicale.G5S2U5.repositories.PrenotazioneRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -36,7 +43,7 @@ public class PrenotazioneService {
         LocalDate dataViaggio = viaggio.getData();
 
         boolean exists = prenotazioneRepository
-                .existsByDipendenteIdAndDataViaggio(dipendente.getId(), dataViaggio);
+                .existsByDipendenteIdAndDataViaggioSave(dipendente.getId(), dataViaggio);
 
         if (exists) {
             throw new ValidationException(
@@ -50,5 +57,58 @@ public class PrenotazioneService {
         log.info("La prenotazione con id " + savedPrenotazione.getId() + "è stata salvata correttamente");
 
         return savedPrenotazione;
+    }
+
+    public Page<Prenotazione> findAll(int page, int size, String sortBy) {
+        if (size > 100 || size < 0) size = 10;
+        if (page < 10) page = 0;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.prenotazioneRepository.findAll(pageable);
+    }
+
+    public Prenotazione findById(UUID prenotazioneId) {
+        return this.prenotazioneRepository.findById(prenotazioneId).orElseThrow(() -> new NotFoundException(prenotazioneId));
+    }
+
+    public List<Prenotazione> findPrenotazioniByDipendente(UUID dipendenteId) {
+
+        Dipendente dipendente = dipendenteService.findById(dipendenteId);
+
+        return prenotazioneRepository.findByDipendenteId(dipendente.getId());
+    }
+
+    public Prenotazione findByIdAndUpdate(UUID id, PrenotazionePayload payload) {
+
+        Prenotazione found = this.findById(id);
+
+        Dipendente dipendente = dipendenteService.findById(payload.getDipendenteId());
+        Viaggio viaggio = viaggioService.findById(payload.getViaggioId());
+
+        LocalDate dataViaggio = viaggio.getData();
+
+        boolean exists = prenotazioneRepository
+                .existsByDipendenteIdAndDataViaggioUpdate(
+                        dipendente.getId(),
+                        dataViaggio,
+                        found.getId()
+                );
+
+        if (exists) {
+            throw new ValidationException(
+                    List.of("Hai già una prenotazione per questa data")
+            );
+        }
+
+        found.setDipendente(dipendente);
+        found.setViaggio(viaggio);
+        found.setNote(payload.getNote());
+        found.setDataViaggio(dataViaggio);
+
+        return prenotazioneRepository.save(found);
+    }
+
+    public void findByIdAndDelete(UUID id) {
+        Prenotazione found = this.findById(id);
+        prenotazioneRepository.delete(found);
     }
 }

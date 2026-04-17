@@ -13,5 +13,7 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, UUID
 
     List<Prenotazione> findByDipendenteId(UUID dipendenteId);
 
-    boolean existsByDipendenteIdAndDataViaggio(UUID dipendenteId, LocalDate dataViaggio);
+    boolean existsByDipendenteIdAndDataViaggioSave(UUID dipendenteId, LocalDate dataViaggio);
+
+    boolean existsByDipendenteIdAndDataViaggioUpdate(UUID dipendenteId, LocalDate dataViaggio, UUID id);
 }
