@@ -1,7 +1,9 @@
 package cristiancicale.G5S2U5.services;
 
+import cristiancicale.G5S2U5.entities.StatoViaggio;
 import cristiancicale.G5S2U5.entities.Viaggio;
 import cristiancicale.G5S2U5.exceptions.NotFoundException;
+import cristiancicale.G5S2U5.exceptions.ValidationException;
 import cristiancicale.G5S2U5.payloads.ViaggioDTO;
 import cristiancicale.G5S2U5.payloads.ViaggioPayload;
 import cristiancicale.G5S2U5.repositories.ViaggioRepository;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,6 +46,25 @@ public class ViaggioService {
 
     public Viaggio findById(UUID viaggioId) {
         return this.viaggioRepository.findById(viaggioId).orElseThrow(() -> new NotFoundException(viaggioId));
+    }
+
+    public Viaggio completaViaggio(UUID viaggioId) {
+
+        Viaggio found = this.findById(viaggioId);
+
+        if (found.getStatoViaggio() == StatoViaggio.COMPLETATO) {
+            throw new ValidationException(
+                    List.of("Il viaggio è già completato")
+            );
+        }
+
+        found.setStatoViaggio(StatoViaggio.COMPLETATO);
+
+        Viaggio viaggioUpdated = this.viaggioRepository.save(found);
+
+        log.info("Il viaggio con id " + viaggioUpdated.getId() + " è stato completato");
+
+        return viaggioUpdated;
     }
 
     public Viaggio findByIdAndUpdate(UUID viaggioId, ViaggioPayload body) {

@@ -43,7 +43,7 @@ public class PrenotazioneService {
         LocalDate dataViaggio = viaggio.getData();
 
         boolean exists = prenotazioneRepository
-                .existsByDipendenteIdAndDataViaggioSave(dipendente.getId(), dataViaggio);
+                .existsByDipendenteIdAndDataViaggio(dipendente.getId(), dataViaggio);
 
         if (exists) {
             throw new ValidationException(
@@ -87,7 +87,7 @@ public class PrenotazioneService {
         LocalDate dataViaggio = viaggio.getData();
 
         boolean exists = prenotazioneRepository
-                .existsByDipendenteIdAndDataViaggioUpdate(
+                .existsByDipendenteIdAndDataViaggio(
                         dipendente.getId(),
                         dataViaggio,
                         found.getId()

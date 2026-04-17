@@ -1,4 +1,6 @@
 package cristiancicale.G5S2U5.payloads;
 
-public record PrenotazioneRespDTO() {
+import java.util.UUID;
+
+public record PrenotazioneRespDTO(UUID prenotazioneId) {
 }
