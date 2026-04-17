@@ -4,6 +4,7 @@ import cristiancicale.G5S2U5.entities.Prenotazione;
 import cristiancicale.G5S2U5.exceptions.ValidationException;
 import cristiancicale.G5S2U5.payloads.PrenotazioneDTO;
 import cristiancicale.G5S2U5.payloads.PrenotazionePayload;
+import cristiancicale.G5S2U5.payloads.PrenotazioneRespDTO;
 import cristiancicale.G5S2U5.services.PrenotazioneService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,7 @@ public class PrenotazioneController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Prenotazione savePrenotazione(@RequestBody @Validated PrenotazioneDTO body, BindingResult validationResult) {
+    public PrenotazioneRespDTO savePrenotazione(@RequestBody @Validated PrenotazioneDTO body, BindingResult validationResult) {
 
         if (validationResult.hasErrors()) {
 
@@ -36,7 +37,8 @@ public class PrenotazioneController {
             throw new ValidationException(errors);
         }
 
-        return prenotazioneService.save(body);
+        Prenotazione newPrenotazione = this.prenotazioneService.save(body);
+        return new PrenotazioneRespDTO(newPrenotazione.getId());
     }
 
     @GetMapping
