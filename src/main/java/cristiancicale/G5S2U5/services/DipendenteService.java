@@ -16,4 +16,6 @@ public class DipendenteService {
         this.dipendenteRepository = dipendenteRepository;
         this.cloudinaryUploader = cloudinaryUploader;
     }
+
+    
 }
