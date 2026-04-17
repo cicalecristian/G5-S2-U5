@@ -1,15 +1,15 @@
 package cristiancicale.G5S2U5.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "prenotazioni")
+@Table(name = "prenotazioni",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"dipendente_id", "data_viaggio"}))
 @NoArgsConstructor
 @Getter
 @Setter
@@ -19,5 +19,28 @@ public class Prenotazione {
     @Id
     @GeneratedValue
     @Setter(AccessLevel.NONE)
-    private UUID userId;
+    private UUID id;
+
+    @Column(name = "data_richiesta", nullable = false)
+    private LocalDate dataRichiesta;
+
+    @Column(length = 500)
+    private String note;
+
+    @Column(name = "data_viaggio", nullable = false)
+    private LocalDate dataViaggio;
+
+    @ManyToOne
+    @JoinColumn(name = "dipendente_id", nullable = false)
+    private Dipendente dipendente;
+
+    @ManyToOne
+    @JoinColumn(name = "viaggio_id", nullable = false)
+    private Viaggio viaggio;
+
+    public Prenotazione(LocalDate dataRichiesta, String note, LocalDate dataViaggio) {
+        this.dataRichiesta = dataRichiesta;
+        this.note = note;
+        this.dataViaggio = dataViaggio;
+    }
 }
