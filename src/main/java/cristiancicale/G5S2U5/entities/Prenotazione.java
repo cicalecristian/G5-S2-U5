@@ -38,9 +38,9 @@ public class Prenotazione {
     @JoinColumn(name = "viaggio_id", nullable = false)
     private Viaggio viaggio;
 
-    public Prenotazione(LocalDate dataRichiesta, String note, LocalDate dataViaggio) {
-        this.dataRichiesta = dataRichiesta;
+    public Prenotazione(Dipendente dipendente, Viaggio viaggio, String note) {
+        this.dipendente = dipendente;
+        this.viaggio = viaggio;
         this.note = note;
-        this.dataViaggio = dataViaggio;
     }
 }
