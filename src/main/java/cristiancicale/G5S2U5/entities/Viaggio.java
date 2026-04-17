@@ -27,11 +27,10 @@ public class Viaggio {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "stato_viaggio")
-    private StatoViaggio statoViaggio;
+    private StatoViaggio statoViaggio = StatoViaggio.IN_PROGRAMMA;
 
-    public Viaggio(String destinazione, LocalDate data, StatoViaggio statoViaggio) {
+    public Viaggio(String destinazione, LocalDate data) {
         this.destinazione = destinazione;
         this.data = data;
-        this.statoViaggio = statoViaggio;
     }
 }
